@@ -1,9 +1,14 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes";
+import Providers from "./providers";
 
-createRoot(document.getElementById('root')).render(
+//Nothing out of ordinary here, will comment if something big and scary gets added
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+    <Providers>
+      <RouterProvider router={router} />
+    </Providers>
+  </StrictMode>
+);
