@@ -1,10 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
 import AppLayout from "./AppLayout";
-import { RequireAuth } from "./RouteGuards";
+import { RequireAuth, RequireAdmin } from "./RouteGuards";
 
 import LoginPage from "../features/auth/pages/LoginPage";
 import BrowsePage from "../features/items/pages/BrowsePage";
 import NotFound from "../components/NotFound";
+
+// Admin pages
+import AdminDashboardPage from "../features/admin/pages/AdminDashboardPage";
+import AdminItemsPage from "../features/admin/pages/AdminItemsPage";
+import AdminClaimsPage from "../features/admin/pages/AdminClaimsPage";
 
 //Application route configuration
 export const router = createBrowserRouter([
@@ -22,6 +27,34 @@ export const router = createBrowserRouter([
           </RequireAuth>
         ),
       },
+      
+      // Admin-only routes
+      {
+        path: "admin",
+        element: (
+          <RequireAdmin>
+            <AdminDashboardPage />
+          </RequireAdmin>
+        ),
+      },
+      {
+        path: "admin/items",
+        element: (
+          <RequireAdmin>
+            <AdminItemsPage />
+          </RequireAdmin>
+        ),
+      },
+      {
+        path: "admin/claims",
+        element: (
+          <RequireAdmin>
+            <AdminClaimsPage />
+          </RequireAdmin>
+        ),
+      },      
+
+
       { path: "*", element: <NotFound /> }, /* Catches any undefined routes*/ 
     ],
   },

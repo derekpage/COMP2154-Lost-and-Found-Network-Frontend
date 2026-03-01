@@ -6,3 +6,14 @@ export function RequireAuth({ children }) {
   const { isAuthed } = useAuth(); //Access authentication state from context
   return isAuthed ? children : <Navigate to="/login" replace />; 
 }
+
+//Blocks access unless user is logged in and has the admin role
+
+export function RequireAdmin({ children }) {
+  const { isAuthed, user } = useAuth();
+
+  if (!isAuthed) return <Navigate to="/login" replace />;
+  if (user?.role !== "ADMIN") return <Navigate to="/" replace />;
+
+  return children;
+}
