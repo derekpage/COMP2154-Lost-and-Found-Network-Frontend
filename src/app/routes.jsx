@@ -7,6 +7,7 @@ import RegisterPage from "../features/auth/pages/RegisterPage";
 import ProfilePage from "../features/auth/pages/ProfilePage";
 
 import BrowsePage from "../features/items/pages/BrowsePage";
+import MyReportsPage from "../features/items/pages/MyReportsPage";
 import NotFound from "../components/NotFound";
 
 // Admin pages
@@ -36,6 +37,14 @@ export const router = createBrowserRouter(
           element: (
             <RequireAuth>
               <ProfilePage />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "report",
+          element: (
+            <RequireAuth>
+              <MyReportsPage />
             </RequireAuth>
           ),
         },
