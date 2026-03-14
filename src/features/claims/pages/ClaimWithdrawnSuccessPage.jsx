@@ -10,7 +10,7 @@ export default function ClaimWithdrawnSuccessPage() {
           <div className={styles.icon}>✓</div>
           <h1 className={styles.title}>Claim Withdrawn</h1>
           <p className={styles.text}>
-            Success — you have withdrawn this claim.
+            Success — you have withdrawn this claim!
           </p>
 
           <div className={styles.actions}>

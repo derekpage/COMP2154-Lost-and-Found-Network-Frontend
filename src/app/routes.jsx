@@ -81,7 +81,7 @@ export const router = createBrowserRouter(
             </RequireAdmin>
           ),
         },
-        {
+        { //Items
           path: "items",
           element: (
           <RequireAuth>
@@ -121,7 +121,7 @@ export const router = createBrowserRouter(
             </RequireAuth>
           ),
         },
-        {
+        { //Claims
           path: "claims",
           element: (
             <RequireAuth>

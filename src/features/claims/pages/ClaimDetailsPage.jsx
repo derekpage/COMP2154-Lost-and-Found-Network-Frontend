@@ -114,7 +114,7 @@ export default function ClaimDetailsPage() {
             <div className={styles.feedbackBox}>
               <h2 className={styles.sectionTitle}>Finder Feedback</h2>
               <p className={styles.feedbackText}>
-                {claim.reporter_feedback || "No feedback provided."}
+                {claim.reporter_feedback || "No feedback provided"}
               </p>
             </div>
           )}

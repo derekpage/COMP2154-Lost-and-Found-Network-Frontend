@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import * as claimsApi from "../api/claimsApi";
 
 export default function useClaims(userId) {
@@ -6,7 +6,7 @@ export default function useClaims(userId) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-  async function refreshClaims() {
+  const refreshClaims = useCallback(async () => {
     try {
       setIsLoading(true);
       setError("");
@@ -17,13 +17,13 @@ export default function useClaims(userId) {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [userId]);
 
   useEffect(() => {
     if (userId) {
       refreshClaims();
     }
-  }, [userId]);
+  }, [userId, refreshClaims]);
 
   return {
     claims,
@@ -32,3 +32,4 @@ export default function useClaims(userId) {
     refreshClaims,
   };
 }
+
