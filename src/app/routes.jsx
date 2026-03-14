@@ -21,6 +21,13 @@ import EditItemPage from "../features/items/pages/EditItemPage";
 import CreateLostItemPage from "../features/items/pages/CreateLostItemPage";
 import CreateFoundItemPage from "../features/items/pages/CreateFoundItemPage";
 
+// Item claims
+import MyClaimsPage from "../features/claims/pages/MyClaimsPage";
+import ClaimDetailsPage from "../features/claims/pages/ClaimDetailsPage";
+import ClaimWithdrawnSuccessPage from "../features/claims/pages/ClaimWithdrawnSuccessPage";
+
+
+
 export const router = createBrowserRouter(
   [
     //Public routes
@@ -112,6 +119,30 @@ export const router = createBrowserRouter(
             <RequireAuth>
               <CreateFoundItemPage />
             </RequireAuth>
+          ),
+        },
+        {
+          path: "claims",
+          element: (
+            <RequireAuth>
+              <MyClaimsPage />
+            </RequireAuth>
+            ),
+        },
+        {
+          path: "claims/:claimId",
+          element: (
+            <RequireAuth>
+              <ClaimDetailsPage />
+            </RequireAuth>
+            ),
+        },
+        {
+          path: "claims/:claimId/withdrawn-success",
+          element: (
+          <RequireAuth>
+            <ClaimWithdrawnSuccessPage />
+          </RequireAuth>
           ),
         },
       ],
