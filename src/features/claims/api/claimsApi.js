@@ -9,7 +9,7 @@ let mockClaims = [
     claimant_id: 2,
     item_title: "Phone",
     verification_details:
-      "I believe this is my phone. It has a cracked screen protector and a blue case.",
+      "this is my phone. It has a cracked screen and a blue case",
     status: "pending",
     reporter_feedback: null,
     contact_shared_at: null,
@@ -23,10 +23,10 @@ let mockClaims = [
     claimant_id: 2,
     item_title: "Backpack",
     verification_details:
-      "This may be my backpack. It should contain a math notebook and a charger.",
+      "This may be my backpack. It should contain a math notebook and a charger",
     status: "rejected",
     reporter_feedback:
-      "The item contents and identifying details did not match what was reported.",
+      "The item contents and identifying details did not match what was reported",
     contact_shared_at: null,
     created_at: "2026-03-12T09:30:00.000Z",
     updated_at: "2026-03-13T15:45:00.000Z",
@@ -38,7 +38,7 @@ let mockClaims = [
     claimant_id: 1,
     item_title: "Wallet",
     verification_details:
-      "Brown leather wallet with student card and transit pass inside.",
+      "Brown leather wallet with student card and TTC card inside",
     status: "approved",
     reporter_feedback: null,
     contact_shared_at: "2026-03-14T11:00:00.000Z",
@@ -52,7 +52,7 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/* ---------------- MOCK VERSION ---------------- */
+//Mock data
 
 async function mockListMyClaims(userId) {
   await delay(200);
@@ -93,7 +93,7 @@ async function mockWithdrawClaim(claimId, userId) {
   return { ...mockClaims[index] };
 }
 
-/* ---------------- REAL VERSION ---------------- */
+//Real data
 
 async function realListMyClaims() {
   return await http.get("/claims/my-claims");
@@ -107,7 +107,7 @@ async function realWithdrawClaim(claimId) {
   return await http.patch(`/claims/${claimId}/withdraw`);
 }
 
-/* ---------------- PUBLIC API ---------------- */
+//Public
 
 export async function listMyClaims(userId) {
   return USE_MOCK ? mockListMyClaims(userId) : realListMyClaims();
