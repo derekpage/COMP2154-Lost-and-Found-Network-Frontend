@@ -1,46 +1,60 @@
-import "../../../styles/ItemCard.css";
+import { Link } from "react-router-dom";
+import StatusPill from "./StatusPill";
+import styles from "../styles/itemCard.module.css";
 
-// Displays a single lost/found item as a card
-export default function ItemCard({ item }) {
-  const formattedDate = item.date
-    ? new Date(item.date).toLocaleDateString("en-CA", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "N/A";
-
+export default function ItemCard({ item, onSoftDelete }) {
   return (
-    <div className="item-card">
-      
-      {/* Item image */}
-      <div className="item-card-image">
-        {(item.imagePreview || item.image_url) ? (
+    <div className={styles.card}>
+      <div className={styles.left}>
+        {item.imageUrl ? (
           <img
-            src={item.imagePreview || `${import.meta.env.VITE_API_BASE_URL}${item.image_url}`}
+            src={item.imageUrl}
             alt={item.title}
-            style={{ width: "100%", height: "160px", objectFit: "cover", borderRadius: "6px" }}
+            className={styles.image}
           />
         ) : (
-          "No Image"
+          <div className={styles.placeholder}>No Image</div>
         )}
-      </div>
 
-      {/* Item information */}
-      <div className="item-card-body">
-        <div className="item-card-header">
-          <h3 className="item-card-title">{item.title}</h3>
+        <div className={styles.meta}>
+          <h3 className={styles.title}>{item.title}</h3>
 
-          <span className={`item-status-badge ${item.status?.toLowerCase()}`}>
-            {(item.status || "ACTIVE").toUpperCase()}
-          </span>
+          <p className={styles.description}>{item.description}</p>
+
+          <div className={styles.details}>
+            <div>
+              <strong>Date:</strong> {item.date}
+            </div>
+            <div>
+              <strong>Location:</strong> {item.location}
+            </div>
+          </div>
+
+          <div className={styles.actions}>
+            <Link to={`/items/${item.id}`} className={styles.primaryBtn}>
+              Details
+            </Link>
+
+            <Link
+              to={`/items/${item.id}/edit`}
+              className={styles.secondaryBtn}
+            >
+              Edit
+            </Link>
+
+            <button
+              onClick={() => onSoftDelete?.(item.id)}
+              className={styles.deleteBtn}
+            >
+              Soft Delete
+            </button>
+          </div>
         </div>
-
-        <p className="item-card-description">{item.description}</p>
-        <p className="item-card-meta">Location: {item.location}</p>
-        <p className="item-card-meta">Date Lost: {formattedDate}</p>
       </div>
 
+      <div className={styles.statusWrapper}>
+        <StatusPill status={item.status} />
+      </div>
     </div>
   );
 }
