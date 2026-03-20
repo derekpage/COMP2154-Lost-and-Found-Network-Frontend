@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PageContainer from "../../../components/ui/PageContainer";
 import * as itemsApi from "../api/itemsApi";
@@ -7,6 +7,7 @@ import styles from "../styles/itemDetails.module.css";
 
 export default function ItemDetailsPage() {
   const { itemId } = useParams();
+  const navigate = useNavigate();
   const [item, setItem] = useState(null);
   const [error, setError] = useState("");
 
@@ -25,7 +26,7 @@ export default function ItemDetailsPage() {
   }, [itemId]);
 
   function handleClaim() {
-    alert("Claim item button does nothing for now.");
+    navigate(`/items/${itemId}/claim`);
   }
 
   if (error) {

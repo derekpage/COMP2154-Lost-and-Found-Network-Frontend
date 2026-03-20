@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import StatusPill from "./StatusPill";
 import styles from "../styles/itemCard.module.css";
 
-export default function ItemCard({ item, onSoftDelete }) {
+export default function ItemCard({ item, onSoftDelete, readOnly = false }) {
   return (
     <div className={styles.card}>
       <div className={styles.left}>
@@ -35,19 +35,16 @@ export default function ItemCard({ item, onSoftDelete }) {
               Details
             </Link>
 
-            <Link
-              to={`/items/${item.id}/edit`}
-              className={styles.secondaryBtn}
-            >
-              Edit
-            </Link>
-
-            <button
-              onClick={() => onSoftDelete?.(item.id)}
-              className={styles.deleteBtn}
-            >
-              Delete
-            </button>
+            {!readOnly && (
+              <>
+                <Link to={`/items/${item.id}/edit`} className={styles.secondaryBtn}>
+                  Edit
+                </Link>
+                <button onClick={() => onSoftDelete?.(item.id)} className={styles.deleteBtn}>
+                  Delete
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

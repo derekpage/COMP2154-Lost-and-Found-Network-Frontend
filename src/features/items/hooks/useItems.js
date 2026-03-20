@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as itemsApi from "../api/itemsApi";
 
-export default function useItems() {
+export default function useItems({ mine = false } = {}) {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -10,7 +10,7 @@ export default function useItems() {
     try {
       setIsLoading(true);
       setError("");
-      const data = await itemsApi.listItems();
+      const data = mine ? await itemsApi.listMyItems() : await itemsApi.listItems();
       setItems(data);
     } catch (e) {
       setError(e.message || "Failed to load items");
