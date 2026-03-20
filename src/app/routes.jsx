@@ -6,6 +6,7 @@ import LoginPage from "../features/auth/pages/LoginPage";
 import RegisterPage from "../features/auth/pages/RegisterPage";
 import ProfilePage from "../features/auth/pages/ProfilePage";
 
+import LandingPage from "../features/landing/LandingPage";
 import BrowsePage from "../features/items/pages/BrowsePage";
 import NotFound from "../components/NotFound";
 
@@ -20,13 +21,13 @@ import AdminManageDataPage from "../features/admin/pages/AdminManageDataPage";
 import ItemsDashboardPage from "../features/items/pages/ItemsDashboardPage";
 import ItemDetailsPage from "../features/items/pages/ItemDetailsPage";
 import EditItemPage from "../features/items/pages/EditItemPage";
-import CreateLostItemPage from "../features/items/pages/CreateLostItemPage";
-import CreateFoundItemPage from "../features/items/pages/CreateFoundItemPage";
+import ReportItemPage from "../features/items/pages/ReportItemPage";
 
 // Item claims
 import MyClaimsPage from "../features/claims/pages/MyClaimsPage";
 import ClaimDetailsPage from "../features/claims/pages/ClaimDetailsPage";
 import ClaimWithdrawnSuccessPage from "../features/claims/pages/ClaimWithdrawnSuccessPage";
+import ClaimSubmitPage from "../features/claims/pages/ClaimSubmitPage";
 
 
 
@@ -36,14 +37,14 @@ export const router = createBrowserRouter(
     //Public routes
     { path: "/login", element: <LoginPage /> },
     { path: "/register", element: <RegisterPage /> },
-
+    { path: "/", element: <LandingPage /> },
 
     {
       path: "/",
       element: <AppLayout />,
       children: [
         {
-          index: true,
+          path: "browse",
           element: (
             <RequireAuth>
               <BrowsePage />
@@ -120,7 +121,7 @@ export const router = createBrowserRouter(
           path: "items/report-lost",
           element: (
             <RequireAuth>
-              <CreateLostItemPage />
+              <ReportItemPage type="lost" />
             </RequireAuth>
           ),
         },
@@ -128,7 +129,15 @@ export const router = createBrowserRouter(
           path: "items/report-found",
           element: (
             <RequireAuth>
-              <CreateFoundItemPage />
+              <ReportItemPage type="found" />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "items/:itemId/claim",
+          element: (
+            <RequireAuth>
+              <ClaimSubmitPage />
             </RequireAuth>
           ),
         },

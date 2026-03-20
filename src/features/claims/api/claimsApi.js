@@ -1,4 +1,5 @@
 import http from "../../../services/httpClient";
+import { getToken } from "../../../services/authStorage";
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_API === "true";
 
@@ -52,6 +53,25 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function mockSubmitClaim(itemId, data, userId) {
+  await delay(300);
+  const newClaim = {
+    id: mockClaims.length + 1,
+    item_id: Number(itemId),
+    claimant_id: userId,
+    item_title: `Item #${itemId}`,
+    verification_details: data.verification_details,
+    status: "pending",
+    reporter_feedback: null,
+    contact_shared_at: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    reviewed_at: null,
+  };
+  mockClaims.push(newClaim);
+  return { ...newClaim };
+}
+
 //Mock data
 
 async function mockListMyClaims(userId) {
@@ -96,15 +116,19 @@ async function mockWithdrawClaim(claimId, userId) {
 //Real data
 
 async function realListMyClaims() {
-  return await http.get("/claims/my-claims");
+  return await http.get("/claims/my-claims", { token: getToken() });
 }
 
 async function realGetMyClaimById(claimId) {
-  return await http.get(`/claims/${claimId}`);
+  return await http.get(`/claims/${claimId}`, { token: getToken() });
 }
 
 async function realWithdrawClaim(claimId) {
-  return await http.patch(`/claims/${claimId}/withdraw`);
+  return await http.patch(`/claims/${claimId}/withdraw`, null, { token: getToken() });
+}
+
+async function realSubmitClaim(itemId, data) {
+  return await http.post("/claims", { item_id: Number(itemId), ...data }, { token: getToken() });
 }
 
 //Public
@@ -123,4 +147,10 @@ export async function withdrawClaim(claimId, userId) {
   return USE_MOCK
     ? mockWithdrawClaim(claimId, userId)
     : realWithdrawClaim(claimId);
+}
+
+export async function submitClaim(itemId, data, userId) {
+  return USE_MOCK
+    ? mockSubmitClaim(itemId, data, userId)
+    : realSubmitClaim(itemId, data);
 }

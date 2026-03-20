@@ -35,7 +35,23 @@ export default function MyClaimsPage() {
         </p>
 
         {isLoading && <p>Loading...</p>}
-        {error && <p className={styles.error}>{error}</p>}
+
+        {error && (
+          <div className={styles.errorState}>
+            <p className={styles.errorTitle}>Unable to load claims</p>
+            <p className={styles.errorText}>{error}</p>
+          </div>
+        )}
+
+        {!isLoading && !error && claims.length === 0 && (
+          <div className={styles.emptyState}>
+            <p className={styles.emptyTitle}>No claims yet</p>
+            <p className={styles.emptyText}>
+              Browse items and submit a claim if you find something that belongs to you.
+            </p>
+            <Link to="/items" className={styles.browseBtn}>Browse Items</Link>
+          </div>
+        )}
 
         <div className={styles.list}>
           {claims.map((claim) => (

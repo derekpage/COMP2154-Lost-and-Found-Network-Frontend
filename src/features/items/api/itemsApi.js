@@ -35,6 +35,11 @@ async function mockListItems() {
   return [...mockItems];
 }
 
+async function mockListMyItems() {
+  await delay(250);
+  return [...mockItems]; // mock has no user IDs, return all for now
+}
+
 async function mockGetItemById(id) {
   await delay(200);
 
@@ -90,7 +95,12 @@ function mapItem(item) {
 
 async function realListItems() {
   const items = await http.get("/items", { token: getToken() });
-  return items.map(mapItem);
+  return (items ?? []).map(mapItem);
+}
+
+async function realListMyItems() {
+  const items = await http.get("/items/my-items", { token: getToken() });
+  return (items ?? []).map(mapItem);
 }
 
 async function realGetItemById(id) {
@@ -178,6 +188,10 @@ async function realCreateItem(data) {
 
 export async function listItems() {
   return USE_MOCK ? mockListItems() : realListItems();
+}
+
+export async function listMyItems() {
+  return USE_MOCK ? mockListMyItems() : realListMyItems();
 }
 
 export async function getItemById(id) {
