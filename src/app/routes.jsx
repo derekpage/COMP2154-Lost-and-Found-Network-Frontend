@@ -27,6 +27,7 @@ import CreateFoundItemPage from "../features/items/pages/CreateFoundItemPage";
 import MyClaimsPage from "../features/claims/pages/MyClaimsPage";
 import ClaimDetailsPage from "../features/claims/pages/ClaimDetailsPage";
 import ClaimWithdrawnSuccessPage from "../features/claims/pages/ClaimWithdrawnSuccessPage";
+import ClaimInboxPage from "../features/claims/pages/ClaimInboxPage";
 
 
 
@@ -130,6 +131,14 @@ export const router = createBrowserRouter(
           element: (
             <RequireAuth>
               <CreateFoundItemPage />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "claims/inbox",
+          element: (
+            <RequireAuth>
+              <ClaimInboxPage />
             </RequireAuth>
           ),
         },

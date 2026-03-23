@@ -1,65 +1,23 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import ItemCard from "../components/ItemCard";
 import "../../../styles/BrowsePage.css";
 
-// Mock listings
-const mockItems = [
-  {
-    id: 1,
-    title: "Black Wallet",
-    description: "Black leather wallet with credit cards inside",
-    location: "Main Library",
-    date: "2026-02-20",
-    category: "Accessories",
-    type: "Lost",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    title: "AirPods Case",
-    description: "White AirPods Pro case with scratches",
-    location: "Student Center cafeteria",
-    date: "2026-02-22",
-    category: "Electronics",
-    type: "Lost",
-    status: "Approved",
-  },
-  {
-    id: 3,
-    title: "Blue Backpack",
-    description: "Backpack found with notebooks inside",
-    location: "Gym",
-    date: "2026-02-24",
-    category: "Bags",
-    type: "Found",
-    status: "Found",
-  },
-  {
-    id: 4,
-    title: "Student ID Card",
-    description: "George Brown student ID found near the cafeteria",
-    location: "Student Center",
-    date: "2026-02-25",
-    category: "Accessories",
-    type: "Found",
-    status: "Lost",
-  },
-];
+
+
 
 export default function BrowsePage() {
-  const navigate = useNavigate();
   const [view, setView] = useState("grid");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [items, setItems] = useState([]);
-  const [hasLoadedBackend, setHasLoadedBackend] = useState(false);
 
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [selectedDateFilter, setSelectedDateFilter] = useState("All Dates");
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState("All");
+  const [selectedCampusFilter, setSelectedCampusFilter] = useState("All Campuses");
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -101,6 +59,7 @@ export default function BrowsePage() {
             item.location_details ||
             item.display_name ||
             "Unknown Location",
+          campus: item.campus || item.campus_name || item.display_name || "Unknown Campus",
           date: item.date || "",
           category:
             item.category ||
@@ -122,7 +81,6 @@ export default function BrowsePage() {
         setItems([]);
       } finally {
         setLoading(false);
-        setHasLoadedBackend(true);
       }
     };
 
@@ -137,13 +95,14 @@ export default function BrowsePage() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Use backend items once loaded, otherwise fall back to mock items.
-  const allItems = hasLoadedBackend ? items : mockItems;
-
-  const filteredItems = allItems.filter((item) => {
+  const filteredItems = items.filter((item) => {
     const matchesCategory =
       selectedCategory === "All Categories" ||
       item.category === selectedCategory;
+
+    const matchesCampus =
+      selectedCampusFilter === "All Campuses" ||
+      item.campus === selectedCampusFilter;
 
     const search = debouncedSearchTerm.toLowerCase();
 
@@ -163,14 +122,18 @@ export default function BrowsePage() {
       (itemDate && selectedDateFilter === "Last Week" && diffDays <= 7) ||
       (itemDate && selectedDateFilter === "Last Month" && diffDays <= 30);
 
-    return matchesCategory && matchesSearch && matchesDate;
+    const matchesStatus =
+      selectedStatusFilter === "All" ||
+      (item.type || "").toLowerCase() === selectedStatusFilter.toLowerCase();
+
+    return matchesCategory && matchesCampus && matchesSearch && matchesDate && matchesStatus;
   });
 
   return (
     <div className="browse-page">
       <div className="browse-header">
         <h1>Lost & Found Listings</h1>
-        <button onClick={() => navigate("/report")}>Report Item</button>
+        
       </div>
 
       <div className="browse-search">
@@ -193,8 +156,26 @@ export default function BrowsePage() {
           >
             <option>All Categories</option>
             <option>Electronics</option>
-            <option>Bags</option>
+            <option>Clothing</option>
             <option>Accessories</option>
+            <option>Books & Notes</option>
+            <option>ID & Cards</option>
+            <option>Sports & Gym</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div className="browse-filter-box">
+          <label>Filter by Campus</label>
+          <select
+            className="browse-select"
+            value={selectedCampusFilter}
+            onChange={(e) => setSelectedCampusFilter(e.target.value)}
+          >
+            <option>All Campuses</option>
+            <option>Casa Loma</option>
+            <option>St. James</option>
+            <option>Waterfront</option>
           </select>
         </div>
 
@@ -209,6 +190,19 @@ export default function BrowsePage() {
             <option>Last 24 Hours</option>
             <option>Last Week</option>
             <option>Last Month</option>
+          </select>
+        </div>
+
+        <div className="browse-filter-box">
+          <label>Filter by Type</label>
+          <select
+            className="browse-select"
+            value={selectedStatusFilter}
+            onChange={(e) => setSelectedStatusFilter(e.target.value)}
+          >
+            <option>All</option>
+            <option>Lost</option>
+            <option>Found</option>
           </select>
         </div>
       </div>

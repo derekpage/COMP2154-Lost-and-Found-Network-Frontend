@@ -54,8 +54,8 @@ export default function Navbar() {
 
         {/* Claims link */}
         {isAuthed && (
-          <Link style={styles.link} to="/items">
-            Claims
+          <Link style={styles.link} to="/claims/inbox">
+            Claims Inbox
           </Link>
         )}
       </div>
