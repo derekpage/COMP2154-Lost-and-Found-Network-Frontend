@@ -41,9 +41,14 @@ export default function AdminDashboardPage() {
             <h1 className={styles.title}>Admin Dashboard</h1>
           </div>
 
-          <Link to="/admin/manage-data" className={styles.manageBtn}>
-            Manage Categories & Locations
-          </Link>
+          <div style={{ display: "flex", gap: 10 }}>
+            <Link to="/admin/disputes" className={styles.manageBtn}>
+              Disputes
+            </Link>
+            <Link to="/admin/manage-data" className={styles.manageBtn}>
+              Manage Categories & Locations
+            </Link>
+          </div>
         </div>
 
         {error ? <p className={styles.error}>{error}</p> : null}

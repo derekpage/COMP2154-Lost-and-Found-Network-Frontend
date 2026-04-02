@@ -196,3 +196,11 @@ export async function rejectClaim(claimId) {
   }
   return realRejectClaim(claimId);
 }
+
+export async function escalateDispute(claimId, reason) {
+  if (USE_MOCK) {
+    await delay(300);
+    return { id: Date.now(), claim_id: claimId, reason, status: "open" };
+  }
+  return http.post("/disputes", { claim_id: claimId, reason }, { token: getToken() });
+}

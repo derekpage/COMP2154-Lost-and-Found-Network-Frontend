@@ -15,6 +15,8 @@ import AdminDashboardPage from "../features/admin/pages/AdminDashboardPage";
 import AdminItemsPage from "../features/admin/pages/AdminItemsPage";
 import AdminClaimsPage from "../features/admin/pages/AdminClaimsPage";
 import AdminManageDataPage from "../features/admin/pages/AdminManageDataPage";
+import AdminDisputesPage from "../features/admin/pages/AdminDisputesPage";
+import AdminDisputeDetailPage from "../features/admin/pages/AdminDisputeDetailPage";
 
 
 // Items pages
@@ -93,6 +95,22 @@ export const router = createBrowserRouter(
           <RequireAdmin>
             <AdminManageDataPage />
           </RequireAdmin>
+          ),
+        },
+        {
+          path: "admin/disputes",
+          element: (
+            <RequireAdmin>
+              <AdminDisputesPage />
+            </RequireAdmin>
+          ),
+        },
+        {
+          path: "admin/disputes/:disputeId",
+          element: (
+            <RequireAdmin>
+              <AdminDisputeDetailPage />
+            </RequireAdmin>
           ),
         },
         { //Items
