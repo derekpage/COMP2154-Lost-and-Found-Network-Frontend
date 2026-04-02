@@ -24,6 +24,9 @@ export default function ClaimDetailsPage() {
   const [actionInProgress, setActionInProgress] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectFeedback, setRejectFeedback] = useState("");
+  const [showDisputeModal, setShowDisputeModal] = useState(false);
+  const [disputeReason, setDisputeReason] = useState("");
+  const [disputeSubmitted, setDisputeSubmitted] = useState(false);
 
   async function loadClaim() {
     try {
@@ -72,6 +75,21 @@ export default function ClaimDetailsPage() {
       await loadClaim();
     } catch (e) {
       alert(e.message || "Failed to approve claim");
+    } finally {
+      setActionInProgress(false);
+    }
+  }
+
+  async function handleEscalateDispute() {
+    if (!disputeReason.trim()) return;
+    try {
+      setActionInProgress(true);
+      await claimsApi.escalateDispute(claimId, disputeReason.trim());
+      setShowDisputeModal(false);
+      setDisputeReason("");
+      setDisputeSubmitted(true);
+    } catch (e) {
+      alert(e.message || "Failed to escalate dispute");
     } finally {
       setActionInProgress(false);
     }
@@ -269,6 +287,34 @@ export default function ClaimDetailsPage() {
                 </button>
               </>
             )}
+
+            {!disputeSubmitted && isClaimant && claim.status === "rejected" && (
+              <button
+                type="button"
+                className={styles.backBtn}
+                onClick={() => setShowDisputeModal(true)}
+                disabled={actionInProgress}
+              >
+                Escalate to Dispute
+              </button>
+            )}
+
+            {!disputeSubmitted && isOwner && claim.status === "approved" && (
+              <button
+                type="button"
+                className={styles.backBtn}
+                onClick={() => setShowDisputeModal(true)}
+                disabled={actionInProgress}
+              >
+                Escalate to Dispute
+              </button>
+            )}
+
+            {disputeSubmitted && (
+              <p style={{ color: "#16a34a", fontWeight: 600, fontSize: 14, margin: 0 }}>
+                Dispute submitted — an admin will review this claim.
+              </p>
+            )}
           </div>
 
           {showRejectModal && (
@@ -303,6 +349,44 @@ export default function ClaimDetailsPage() {
                     disabled={actionInProgress}
                   >
                     Submit Rejection
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {showDisputeModal && (
+            <div className={styles.modalOverlay}>
+              <div className={styles.modalBox}>
+                <h2 style={{ marginTop: 0 }}>Escalate to Dispute</h2>
+                <p className={styles.text}>
+                  Explain why you believe this decision should be reviewed by an admin.
+                </p>
+                <textarea
+                  value={disputeReason}
+                  onChange={(e) => setDisputeReason(e.target.value)}
+                  placeholder="e.g. I can provide additional proof of ownership..."
+                  rows={5}
+                  className={styles.textarea}
+                />
+                <div className={styles.modalActions}>
+                  <button
+                    type="button"
+                    className={styles.backBtn}
+                    onClick={() => {
+                      setShowDisputeModal(false);
+                      setDisputeReason("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.approveBtn}
+                    onClick={handleEscalateDispute}
+                    disabled={actionInProgress || !disputeReason.trim()}
+                  >
+                    Submit Dispute
                   </button>
                 </div>
               </div>

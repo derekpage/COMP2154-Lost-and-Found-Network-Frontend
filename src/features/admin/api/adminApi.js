@@ -1,4 +1,5 @@
 import http from "../../../services/httpClient";
+import { getToken } from "../../../services/authStorage";
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_API === "true";
 
@@ -30,6 +31,51 @@ let mockClaims = [
   { id: 1, status: "pending" },
   { id: 2, status: "approved" },
   { id: 3, status: "pending" },
+];
+
+let mockDisputes = [
+  {
+    id: 1,
+    item_id: 1,
+    item_title: "Phone",
+    claim_id: 10,
+    claimant_name: "Jane Smith",
+    reporter_name: "John Doe",
+    reason: "Both parties claim ownership of the same phone. Claimant says it has a blue case, reporter says black case.",
+    status: "open",
+    created_at: "2026-03-22T10:00:00.000Z",
+    updated_at: "2026-03-22T10:00:00.000Z",
+    resolved_at: null,
+    resolution_notes: null,
+  },
+  {
+    id: 2,
+    item_id: 3,
+    item_title: "Wallet",
+    claim_id: 12,
+    claimant_name: "Michael Chen",
+    reporter_name: "Sarah Lee",
+    reason: "Claimant's verification details were rejected but they insist the item is theirs. Requesting admin review.",
+    status: "open",
+    created_at: "2026-03-20T14:30:00.000Z",
+    updated_at: "2026-03-20T14:30:00.000Z",
+    resolved_at: null,
+    resolution_notes: null,
+  },
+  {
+    id: 3,
+    item_id: 2,
+    item_title: "Backpack",
+    claim_id: 8,
+    claimant_name: "Alex Johnson",
+    reporter_name: "Derek Page",
+    reason: "Multiple claims on same item. Need admin to verify correct owner.",
+    status: "resolved",
+    created_at: "2026-03-15T09:00:00.000Z",
+    updated_at: "2026-03-17T11:00:00.000Z",
+    resolved_at: "2026-03-17T11:00:00.000Z",
+    resolution_notes: "Verified ownership through student ID found inside backpack. Claim approved for Alex Johnson.",
+  },
 ];
 
 let mockCategories = [
@@ -258,7 +304,34 @@ async function mockActivateLocation(locationId) {
   return { ...mockLocations[index] };
 }
 
+async function mockListDisputes() {
+  await delay(200);
+  return [...mockDisputes];
+}
+
+async function mockResolveDispute(disputeId, notes) {
+  await delay(200);
+  const idx = mockDisputes.findIndex((d) => String(d.id) === String(disputeId));
+  if (idx === -1) throw new Error("Dispute not found");
+  mockDisputes[idx] = {
+    ...mockDisputes[idx],
+    status: "resolved",
+    resolved_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    resolution_notes: notes,
+  };
+  return { ...mockDisputes[idx] };
+}
+
 //Real
+
+async function realListDisputes() {
+  return await http.get("/admin/disputes");
+}
+
+async function realResolveDispute(disputeId, notes) {
+  return await http.put(`/admin/disputes/${disputeId}`, { status: "resolved", resolution_notes: notes });
+}
 
 async function realGetDashboardMetrics() {
   return await http.get("/admin/dashboard");
@@ -368,4 +441,58 @@ export async function activateLocation(locationId) {
   return USE_MOCK
     ? mockActivateLocation(locationId)
     : realActivateLocation(locationId);
+}
+
+export async function listDisputes() {
+  return USE_MOCK ? mockListDisputes() : realListDisputes();
+}
+
+export async function getDisputeById(disputeId) {
+  if (USE_MOCK) {
+    await delay(200);
+    const dispute = mockDisputes.find((d) => String(d.id) === String(disputeId));
+    if (!dispute) throw new Error("Dispute not found");
+    return { ...dispute };
+  }
+  return http.get(`/admin/disputes/${disputeId}`);
+}
+
+export async function getClaimsForItem(itemId) {
+  if (USE_MOCK) {
+    await delay(200);
+    // Return mock claims that match the item
+    return [
+      {
+        id: 10,
+        item_id: Number(itemId),
+        claimant_name: "Jane Smith",
+        verification_details: "The phone has a blue case and a cracked screen. My student ID wallpaper is on the lock screen.",
+        status: "rejected",
+        created_at: "2026-03-19T08:00:00.000Z",
+      },
+      {
+        id: 11,
+        item_id: Number(itemId),
+        claimant_name: "Alex Torres",
+        verification_details: "This is my phone. It has a black case with a sticker on the back and my photos inside.",
+        status: "pending",
+        created_at: "2026-03-20T14:00:00.000Z",
+      },
+    ];
+  }
+  return http.get(`/admin/items/${itemId}/claims`);
+}
+
+export async function resolveDispute(disputeId, notes) {
+  return USE_MOCK
+    ? mockResolveDispute(disputeId, notes)
+    : realResolveDispute(disputeId, notes);
+}
+
+export async function assignClaim(claimId, assignedToUserId) {
+  if (USE_MOCK) {
+    await delay(200);
+    return { id: claimId, assigned_to_user_id: assignedToUserId };
+  }
+  return http.put(`/claims/${claimId}/assign`, { assigned_to_user_id: assignedToUserId }, { token: getToken() });
 }
